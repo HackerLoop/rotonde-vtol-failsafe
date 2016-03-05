@@ -69,9 +69,9 @@ const manualSettings = {
   },
   Deadband: 0,
   DisarmTime: '2000',
-  FlightModeNumber: 1,
+  FlightModeNumber: 2,
   FlightModePosition: ['Stabilized1',
-    'Stabilized1',
+    'AltitudeHold',
     'Stabilized1',
     'Stabilized1',
     'Stabilized1',
@@ -100,12 +100,14 @@ const manualSettings = {
 
 let currentArmSwitch = false;
 client.eventHandlers.attach('MANUALCONTROLCOMMAND', (e) => {
-  if (currentArmSwitch == e.data.ArmSwitch) {
+  let armSwitch = e.data.Channel.Arming > 800;
+  if (currentArmSwitch == armSwitch) {
     return;
   }
-  currentArmSwitch = e.data.ArmSwitch;
-  if (currentArmSwitch == 'Armed') {
-    client.sendAction('SET_MANUALCONTROLCOMMANDSETTINGS');
+  currentArmSwitch = armSwitch;
+  if (currentArmSwitch == true) {
+    console.log('Sending settings !');
+    client.sendAction('SET_MANUALCONTROLSETTINGS', manualSettings);
   }
 });
 
